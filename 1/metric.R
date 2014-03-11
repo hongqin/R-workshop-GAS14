@@ -8,10 +8,9 @@
 # You can see files in the current working directory
 list.files()
 
-tb.ori = read.csv("Responses20140227-original.csv", colClass=rep("character", 24))
+tb.ori = read.csv("metric_survey_data.csv", colClass=rep("character", 24))
 str(tb.ori); 
 tb = tb.ori
-
 
 names(tb.ori)
 #rename the columns for convenience 

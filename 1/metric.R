@@ -1,13 +1,17 @@
-#2014 March 10
-# analysis of metrics, scientific literacy and attitude survey
+#2014 March 11
+# Analysis of survey data for metrics, scientific literacy and attitude
 # Hong Qin
 
-rm(list=ls())
-setwd("~/github/metric-proficiency--scientific-literacy-and-attitude/2014")
+#First change working directory to the current one.
+# Windows and Mac may have different menu settings. 
+
+# You can see files in the current working directory
 list.files()
+
 tb.ori = read.csv("Responses20140227-original.csv", colClass=rep("character", 24))
 str(tb.ori); 
 tb = tb.ori
+
 
 names(tb.ori)
 #rename the columns for convenience 

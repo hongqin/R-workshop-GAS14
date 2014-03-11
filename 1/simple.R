@@ -24,8 +24,10 @@ pi^2
 log(pi)
 
 #exponetial function
+exp(log(1))
 exp(pi)
 exp(0)
+
 
 #square-root
 sqrt(pi)

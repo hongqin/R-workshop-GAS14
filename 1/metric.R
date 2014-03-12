@@ -251,27 +251,38 @@ hist(tb2$SciLitScore, br=20)
 #########################
 ## regression analyses
 #summary(tb); str(tb)
+
+#remove rows with missing age from analysis. Missing age can cause bugs in anova model comparisons. 
+tb2 = tb2[!is.na(tb2$age), ] 
+
 summary(tb2)
 str(tb2); 
 
 pairs(tb2[, c("metric", "SciLitScore", "SciAttitude")])
 summary(lm(tb2$SciLitScore ~ tb2$metric )) #significant
 summary(lm(tb2$SciAttitude ~ tb2$metric )) #significant
+summary(lm(tb2$SciAttitude ~ tb2$SciLitScore )) #significant
+summary(lm(tb2$SciAttitude ~ tb2$age )) #significant
+summary(lm(tb2$metric ~ tb2$age )) #significant
+
 summary(lm(tb2$SciAttitude ~ tb2$SciLitScore + tb2$metric )) #significant
 ## metric -> SciAttitude and SciLitScore
 
+
 summary(lm(tb2$SciLitScore ~ tb2$metric + tb2$age + tb2$gender + tb2$country  )) #only metric is significant
 
-summary(lm(tb2$SciLitScore ~ tb2$country)) #p=0.018, but seems due to metric?  
+summary(lm(tb2$SciLitScore ~ tb2$country)) #p=0.0009, but seems due to metric?  
 summary(lm(tb2$SciLitScore ~ tb2$metric + tb2$country  )) #only metric is significant
-table(tb2$country)
+
+summary(lm(tb2$SciAttitude ~ tb2$country)) #p=0.0127, but seems due to metric?  
+summary(lm(tb2$SciAttitude ~ tb2$country + tb2$metric)) #country not significant when controled for metric 
 
 
 plot( tb2$SciLitScore ~ jitter(tb2$metric), xlab='Metric Proficiency', ylab='Scientific Literacy', ylim=c(2,10) )
 m1 = lm(tb2$SciLitScore ~ tb2$metric )
 abline(m1, col='red')
 summary(m1)
-text(2, 2.5, "SciLit ~ Metric, R2=0.28, p=1.5E-15", col="red", pos=4)
+text(2, 2.5, "SciLit ~ Metric, R2=0.26, p<0.001", col="red", pos=4)
 #abline(m2, col='blue')
 summary(m2)
 m2 = lm(tb2$SciLitScore ~ tb2$metric + tb2$age)
@@ -309,6 +320,14 @@ summary(lm(tb2$SciAttitude ~ tb2$metric + tb2$age + tb2$gender + tb2$country + t
 summary(lm(tb2$SciAttitude ~ tb2$SciLitScore))
 summary(lm(tb2$SciAttitude ~ tb2$SciLitScore + tb2$metric))
 
+boxplot( tb2$SciAttitude ~ tb2$country )
+boxplot( tb2$SciLitScore ~ tb2$country )
+boxplot( tb2$metric ~ tb2$country )
+
+boxplot( tb2$SciLitScore ~ tb2$age )
+boxplot( tb2$SciAttitude ~ tb2$age )
+boxplot( tb2$metric ~ tb2$age )
+
 ###########
 # remove phD from the samples
 #
@@ -319,7 +338,7 @@ summary(lm(tb3$SciAttitude ~ tb3$metric + tb3$age + tb3$gender + tb3$country + t
 #age is still signicant after PhD are removed from the sample
 
 
-########test 
+########Write an R function to do two-sample test.  For large sample size, exact test is unnecessary. 
 testTwoFactorTb2 = function( fac1, fac2) {
   tbTwo = table( tb2[,fac1], tb2[,fac2] )
   print(tbTwo)

@@ -28,38 +28,33 @@ table(tb$age)
 tb$gender[tb$gender=='']='Do not wish to answer'
 table(tb$gender)
 
-table(tb$age)
-#tb$age[tb$age=="Option 5"] = NA
 table(tb$age, tb$gender)
 
-# add 'NA' to empty answers
-for( i in 5:length(tb[, 1])) {
-  for( j in 5:length(tb[1, ])) {
+# dealing with missing values, add 'NA' to empty answers
+# nested for-loops
+for( i in 5:length(tb[, 1])) {  #outter for-loop 
+  for( j in 5:length(tb[1, ])) {  #inner for-loop
     if ( is.na(tb[i, j]) ) {
-      # tb[i,j] = NA #do nothing
+      # do nothing
     } else if (tb[i,j]=='') {
       tb[i,j] = NA
     } 
   }
 }
 
-summary(tb)
 
-
-# Organize the survey questions by 3 categories
+# The survey contains by 3 categories of questions
 # 1) Metric proficiency
 # 2) Scientific literacy
 # 3) Attitude toward science
+# We will calculate the score of each categoriy separately and then apply regressions. 
 
-head(tb)
-names(tb)
-metrics = c("shaq", "kilo", "mm", "inseam", "weather")
-sciLiteracy = c("light", "fossil", "food", "electronCharge", 
-                "earlyHuman", "laser", "continents", "antibiotics", "electronSize", "earthCenter")
-sciAttitude = c("religiousView", "dailyLife", "SciOnLife", "SciEffect")
 
-##### create a second table, convert factors to numerics
+##### create a second table, convert character values to numerical values
 tb2 = tb[,c(2,4,5)]  #this is the score table
+head(tb2)
+
+#calculate the average age for each category
 tb2$age = NA
 tb2$age[grep("18-22", tb$age)] = 18/2 + 22/2
 tb2$age[grep("23-30", tb$age)] = 23/2 + 30/2
@@ -69,13 +64,27 @@ tb2$age[grep("51-55", tb$age)] = 51/2 + 55/2
 tb2$age[grep("60", tb$age)] = 65
 table(tb$age)
 table(tb2$age)
-
+summary(tb2$age)
 
 ###country 
-tb2$country = 0
+tb2$country = 0  #for non-USA contries
 tb2$country[tb$country=='United States'] = 1
 table( tb2$country )
 table( tb$country )
+
+
+#have a look at some entries
+head(tb)
+
+#double-check the columns
+names(tb)
+
+######################
+### Here are the columns for the 3 categories
+metrics = c("shaq", "kilo", "mm", "inseam", "weather")
+sciLiteracy = c("light", "fossil", "food", "electronCharge", 
+                "earlyHuman", "laser", "continents", "antibiotics", "electronSize", "earthCenter")
+sciAttitude = c("religiousView", "dailyLife", "SciOnLife", "SciEffect")
 
 ########calculate the metric scores
 tb2$shaq = 0.5
@@ -117,14 +126,14 @@ t.test(tb2$weather[tb2$gender=='Female'], tb2$weather[tb2$gender=='Male'])
 # Female participants tend to be younger
 table(tb2$gender, tb2$age)
 
-# conditional 
+# Multiple regression
 m1 = lm( tb2$weather ~ tb2$age )
 m2 = lm( tb2$weather~ tb2$gender + tb2$age )
 summary(m1)
 summary(m2)
 anova(m2,m1)
 
-# summarize the metric proficiency score
+######### summarize the metric proficiency score
 #metrics = c("shaq", "kilo", "mm", "inseam", "weather")
 #metric total score
 tb2$metric = apply( tb2[, metrics], MARGIN=1, FUN=sum )

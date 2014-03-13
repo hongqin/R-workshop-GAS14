@@ -2,33 +2,41 @@
 # Analysis of survey data for metrics, scientific literacy and attitude
 # Hong Qin
 
-#First change working directory to the current one.
-# Windows and Mac may have different menu settings. 
+#First, please change your working directory to the current one.
+# On a mac, "Session"->"Setting working directory" -> "Source file location" 
+# On a Windows, ?????
 
 # You can see files in the current working directory
 list.files()
 
+#Read the survey data in csv format
+# colClass specify that all columns will be treated as characters for now. 
 tb.ori = read.csv("metric_survey_data.csv", colClass=rep("character", 24))
 str(tb.ori); 
-tb = tb.ori
+tb = tb.ori  #make a copy because we will modify the table. 
 
 names(tb.ori)
-#rename the columns for convenience 
+#rename the columns with shortter names for convenience 
 names(tb) = c("time","gender", "age", "degree", "country", "light", "shaq", "fossil", "kilo", "mm", 
         "food","inseam", "weather","electronCharge","earlyHuman", 
         "laser", "continents", "antibiotics", "electronSize","earthCenter",
         "religiousView","dailyLife","SciOnLife", "SciEffect")
 
-#visual check of the renaming 
+#visual check of the renaming. 
+# cbind is to combine columns. 
+# substr is to take a portion of string variables.  
 cbind (names(tb), substr(names(tb.ori), 1, 20))
+?cbind
 
 #correct some input errors
+# If there is no input of 'age'
 tb$age[is.na(tb$age)] = 'Do not wish to answer'
 table(tb$age)
+?table
+# If there is no input of 'gender'
 tb$gender[tb$gender=='']='Do not wish to answer'
 table(tb$gender)
 
-table(tb$age, tb$gender)
 
 # dealing with missing values, add 'NA' to empty answers
 # nested for-loops
@@ -42,12 +50,6 @@ for( i in 5:length(tb[, 1])) {  #outter for-loop
   }
 }
 
-
-# The survey contains by 3 categories of questions
-# 1) Metric proficiency
-# 2) Scientific literacy
-# 3) Attitude toward science
-# We will calculate the score of each categoriy separately and then apply regressions. 
 
 
 ##### create a second table, convert character values to numerical values
@@ -66,20 +68,33 @@ table(tb$age)
 table(tb2$age)
 summary(tb2$age)
 
+#Visualize the data
+table(tb2$age, tb2$gender)
+boxplot( tb2$age ~ tb2$gender)
+
+#histogram of age
+hist(tb2$age)
+
+
 ###country 
 tb2$country = 0  #for non-USA contries
 tb2$country[tb$country=='United States'] = 1
 table( tb2$country )
 table( tb$country )
 
-
 #have a look at some entries
-head(tb)
+head(tb2)
 
 #double-check the columns
-names(tb)
+names(tb2)
 
 ######################
+# The survey contains by 3 categories of questions
+# 1) Metric proficiency
+# 2) Scientific literacy
+# 3) Attitude toward science
+# We will calculate the score of each categoriy separately and then apply regressions. 
+
 ### Here are the columns for the 3 categories
 metrics = c("shaq", "kilo", "mm", "inseam", "weather")
 sciLiteracy = c("light", "fossil", "food", "electronCharge", 
@@ -112,32 +127,30 @@ tb2$weather[tb$weather=="A winter coat"] = 0
 table(tb$weather)
 table(tb2$weather)
 
-#testing the grep function
-#tb$weather[ grep("shirt", tb$weather) ]
-
-#do some preliminary check
-table(tb2$weather)
-tbGenWeather = table(tb2$gender, tb2$weather)
-tbGenWeather
-fisher.test( tbGenWeather)
-t.test(tb2$weather[tb2$gender=='Female'], tb2$weather[tb2$gender=='Male'])
-#Does this mean that females are more uncomfortable with Celsicus?
-
-# Female participants tend to be younger
-table(tb2$gender, tb2$age)
-
-# Multiple regression
-m1 = lm( tb2$weather ~ tb2$age )
-m2 = lm( tb2$weather~ tb2$gender + tb2$age )
-summary(m1)
-summary(m2)
-anova(m2,m1)
-
 ######### summarize the metric proficiency score
 #metrics = c("shaq", "kilo", "mm", "inseam", "weather")
 #metric total score
 tb2$metric = apply( tb2[, metrics], MARGIN=1, FUN=sum )
 hist(tb2$metric, br=20)
+
+
+#Do females tend to be less profient in metric usage? 
+boxplot( tb2$metric ~ tb2$gender )
+
+t.test(tb2$metric[tb2$gender=='Female'], tb2$metric[tb2$gender=='Male'])
+#Does this mean that females are more uncomfortable with metric usage?
+
+# Female participants tend to be younger
+boxplot( tb2$age ~ tb2$gender, ylab='age')
+
+# More female participants with Bachelor degrees
+table( tb2$gender, tb2$degree )
+
+# Multiple regression
+m1 = lm( tb2$metric ~ tb2$age )
+summary(m1)
+m2 = lm( tb2$metric~ tb2$gender + tb2$degree + tb2$age )
+summary(m2)
 
 
 #######calcualte the science attitude scores

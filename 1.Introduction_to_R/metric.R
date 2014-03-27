@@ -4,7 +4,7 @@
 
 #First, please change your working directory to the current one.
 # On Mac, "Session"->"Setting working directory" -> "Source file location" 
-# On Windows, the process is probably different.??
+# On Windows, "Tools"->"Setting working directory" ->"To Source file location". 
 
 # You can see files in the current working directory
 list.files()

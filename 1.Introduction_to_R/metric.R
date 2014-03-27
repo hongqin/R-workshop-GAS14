@@ -77,10 +77,10 @@ hist(tb2$age)
 
 
 ###country 
-tb2$country = 0  #for non-USA contries
+table( tb$country )  #All the inputed 'countries'
+tb2$country = 0  #for non-USA countries
 tb2$country[tb$country=='United States'] = 1
 table( tb2$country )
-table( tb$country )
 
 #have a look at some entries
 head(tb2)
@@ -98,7 +98,8 @@ names(tb2)
 ### Here are the columns for the 3 categories
 metrics = c("shaq", "kilo", "mm", "inseam", "weather")
 sciLiteracy = c("light", "fossil", "food", "electronCharge", 
-                "earlyHuman", "laser", "continents", "antibiotics", "electronSize", "earthCenter")
+                "earlyHuman", "laser", "continents", "antibiotics",
+                "electronSize", "earthCenter")
 sciAttitude = c("religiousView", "dailyLife", "SciOnLife", "SciEffect")
 
 ########calculate the metric scores
@@ -135,7 +136,7 @@ hist(tb2$metric, br=20)
 
 
 #Do females tend to be less profient in metric usage? 
-boxplot( tb2$metric ~ tb2$gender )
+boxplot( tb2$metric ~ tb2$gender, ylab="metric proficiency" )
 
 t.test(tb2$metric[tb2$gender=='Female'], tb2$metric[tb2$gender=='Male'])
 #Does this mean that females are more uncomfortable with metric usage?
@@ -146,11 +147,17 @@ boxplot( tb2$age ~ tb2$gender, ylab='age')
 # More female participants with Bachelor degrees
 table( tb2$gender, tb2$degree )
 
+boxplot( tb2$metric ~ tb2$degree, ylab='metric proficiency')
+
 # Multiple regression
-m1 = lm( tb2$metric ~ tb2$age )
+m1 = lm( tb2$metric ~ tb2$degree )
 summary(m1)
-m2 = lm( tb2$metric~ tb2$gender + tb2$degree + tb2$age )
+
+m2 = lm( tb2$metric ~ tb2$age )
 summary(m2)
+
+m3 = lm( tb2$metric~ tb2$gender + tb2$degree + tb2$age )
+summary(m3)
 
 
 #######calcualte the science attitude scores

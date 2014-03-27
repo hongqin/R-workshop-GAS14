@@ -1,10 +1,10 @@
-#2014 March 11
+#2014 March 26
 # Analysis of survey data for metrics, scientific literacy and attitude
 # Hong Qin
 
 #First, please change your working directory to the current one.
-# On a mac, "Session"->"Setting working directory" -> "Source file location" 
-# On a Windows, ?????
+# On Mac, "Session"->"Setting working directory" -> "Source file location" 
+# On Windows, the process is probably different.??
 
 # You can see files in the current working directory
 list.files()
@@ -356,6 +356,7 @@ testTwoFactorTb2 = function( fac1, fac2) {
   tbTwo = table( tb2[,fac1], tb2[,fac2] )
   print(tbTwo)
   f = fisher.test(tbTwo)
+  #f = chisq.test(tbTwo)
 }
 
 #metrics = c("shaq", "kilo", "mm", "inseam", "weather")

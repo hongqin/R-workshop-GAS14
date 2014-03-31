@@ -21,6 +21,7 @@ names(tb) = c("time","gender", "age", "degree", "country", "light", "shaq", "fos
         "food","inseam", "weather","electronCharge","earlyHuman", 
         "laser", "continents", "antibiotics", "electronSize","earthCenter",
         "religiousView","dailyLife","SciOnLife", "SciEffect")
+str(tb)
 
 #visual check of the renaming. 
 # cbind is to combine columns. 
@@ -28,6 +29,7 @@ names(tb) = c("time","gender", "age", "degree", "country", "light", "shaq", "fos
 cbind (names(tb), substr(names(tb.ori), 1, 20))
 ?cbind
 
+tb[1:5, 2:3]
 #correct some input errors
 # If there is no input of 'age'
 tb$age[is.na(tb$age)] = 'Do not wish to answer'
@@ -289,6 +291,7 @@ summary(lm(tb2$SciAttitude ~ tb2$SciLitScore + tb2$metric )) #significant
 ## metric -> SciAttitude and SciLitScore
 
 
+summary(lm(tb2$SciAttitude ~ tb2$metric + tb2$age + tb2$gender + tb2$country  )) #only metric is significant
 summary(lm(tb2$SciLitScore ~ tb2$metric + tb2$age + tb2$gender + tb2$country  )) #only metric is significant
 
 summary(lm(tb2$SciLitScore ~ tb2$country)) #p=0.0009, but seems due to metric?  
